@@ -5,23 +5,11 @@
 import { Button, Drawer } from 'antd'
 import { useCallback, useState } from 'react'
 
-export default function Home() {
-  const [showDrawer, setShowDrawer] = useState(false);
-
-  const onDrawerClose = useCallback(() => {
-    setShowDrawer(false);
-  }, []);
-
-  const onButtonClick = useCallback(() => {
-    setShowDrawer(true);
-  }, []);
-
+const Home = () => {
   return (
     <>
-      <Drawer open={showDrawer} onClose={onDrawerClose} placement="left">
-        <p>Hello World</p>
-      </Drawer>
-      <Button onClick={onButtonClick}>open</Button>
+      <p>Home Page</p>
     </>
   )
 }
+export default Home;
