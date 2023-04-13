@@ -2,10 +2,13 @@
 * Created by Andrew Shipman
 * 4/12/2023
 */
-import { Row, Col, Drawer, Button, Menu, MenuProps } from 'antd';
-import { useState, useCallback, useMemo } from 'react';
-import { DatabaseFilled, HomeFilled, MenuOutlined } from '@ant-design/icons';
+import { Menu, MenuProps, Layout as AntLayout } from 'antd';
+import React, { useState, useCallback, useMemo } from 'react';
+import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
+import { MenuInfo } from 'rc-menu/lib/interface';
+
+const { Header, Sider, Content } = AntLayout;
 
 type LayoutProps = {
     children: React.ReactElement;
@@ -30,16 +33,12 @@ function getItem(
   }
 
 const Layout = ({ children }: LayoutProps) => {
-    const [showDrawer, setShowDrawer] = useState(false);
+    const [collapsed, setCollapsed] = useState(false);
     const router = useRouter();
-
-    const onDrawerClose = useCallback(() => {
-      setShowDrawer(false);
-    }, []);
   
     const onButtonClick = useCallback(() => {
-      setShowDrawer(true);
-    }, []);
+      setCollapsed(!collapsed)
+    }, [collapsed]);
 
     const menuItems = useMemo(() => {
         return [
@@ -58,9 +57,9 @@ const Layout = ({ children }: LayoutProps) => {
             default:
                 return [];
         }
-    }, [])
+    }, [router.asPath])
 
-    const onMenuItemClick = useCallback((e: any) => {
+    const onMenuItemClick = useCallback((e: MenuInfo) => {
         switch(e.key) {
             case '1':
                 router.push('/');
@@ -69,26 +68,33 @@ const Layout = ({ children }: LayoutProps) => {
                 router.push('/PlayerDatabase');
                 break;
         }
-        setShowDrawer(false);
-    }, [])
+    }, [router])
 
     return (
-        <>
-            <Drawer 
-                open={showDrawer} 
-                onClose={onDrawerClose} 
-                closable={false} 
-                placement="left" 
-                style={{background: '#001529'}} 
-                bodyStyle={{paddingLeft: '0px', paddingRight: '0px'}}
-            >
-                <Menu theme="dark" items={menuItems} defaultSelectedKeys={selectedPage} onClick={onMenuItemClick}/>
-            </Drawer>
-            <div style={{background: '#001529', width: '100%', position:'sticky', top: '0px'}}>
-                <Button type="ghost" icon={<MenuOutlined style={{color: '#ffffff'}}/>} onClick={onButtonClick} size="large" />
-            </div>
-            {children}
-        </>
+        <AntLayout>
+            <Sider trigger={null} collapsible collapsed={collapsed} style={{ height: '100vh', position: 'sticky', top: 0, zIndex: 1 }}>
+                <div className='logo' />
+                <Menu theme="dark" items={menuItems} mode="inline" defaultSelectedKeys={selectedPage} onClick={onMenuItemClick}/>
+            </Sider>
+            <AntLayout className='site-layout'>
+                <Header style={{ padding: 0, background: '#ffffff', position: 'sticky', top: 0, zIndex: 1 }}>
+                    {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                        className: 'trigger',
+                        onClick: onButtonClick,
+                    })}
+                </Header>
+                <Content
+                        style={{
+                        margin: '24px 16px',
+                        padding: 24,
+                        minHeight: '80vh',
+                        background: '#ffffff',
+                    }}
+                >
+                    {children} 
+                </Content>
+            </AntLayout>
+        </AntLayout>
     )
 }
 
