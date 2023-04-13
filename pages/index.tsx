@@ -8,7 +8,9 @@ import { useCallback, useState } from 'react'
 const Home = () => {
   return (
     <>
-      <p>Home Page</p>
+      <p>
+        Home Page
+      </p>
     </>
   )
 }
