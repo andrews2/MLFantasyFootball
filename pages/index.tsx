@@ -12,7 +12,7 @@ const Home = () => {
     fetch('/api/test')
     .then(res => res.json())
     .then(data => {
-        setData(JSON.parse(data));
+        setData(JSON.stringify(data));
     });
 }, []);
 
