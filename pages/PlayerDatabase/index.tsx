@@ -22,8 +22,8 @@ const PlayerDatabase = () => {
         fetch('/api/players')
         .then(res => res.json())
         .then(data => {
-            setPlayers(JSON.parse(data))
-        })
+            setPlayers(JSON.parse(data));
+        });
     }, []);
 
     const tableColumns = useMemo((): ColumnsType<TableDataType> => {
@@ -45,14 +45,14 @@ const PlayerDatabase = () => {
                 ],
                 onFilter: (value: string | number | boolean, record: TableDataType) => record.position === value,
             }
-        ]
-    }, [])
+        ];
+    }, []);
 
     const tableData = useMemo((): TableDataType[] => {
         if (players) {
             return players.map((player, index) => {
-                return {key: String(index), name: player.name, position: player.position}
-            })
+                return {key: String(index), name: player.name, position: player.position};
+            });
         }
         return [];
     }, [players]);
@@ -61,16 +61,16 @@ const PlayerDatabase = () => {
         <Layout style={{background: '#ffffff', height: '100%'}}>
             <Sider style={{background: '#ffffff' }} width="25%">
                 <Card title="Filters" style={{ height: '100%' }}>
-                <Space direction="vertical" size={32} style={{ width: '100% '}}>
-                    <Input size="large" prefix={<SearchOutlined />} placeholder="Search..." />
-                </Space>
+                    <Space direction="vertical" size={32} style={{ width: '100% '}}>
+                        <Input size="large" prefix={<SearchOutlined />} placeholder="Search..." />
+                    </Space>
                 </Card>
             </Sider>
             <Content style={{ marginLeft: '16px' }}> 
                 <Table sticky columns={tableColumns} dataSource={tableData}/>
             </Content>
         </Layout>
-    )
-}
+    );
+};
 
 export default PlayerDatabase;

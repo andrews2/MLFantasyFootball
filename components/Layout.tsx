@@ -1,8 +1,10 @@
 /*
 * Created by Andrew Shipman
 * 4/12/2023
+*
+* creates global layout used for all pages
 */
-import { Menu, MenuProps, Layout as AntLayout } from 'antd';
+import { Menu, MenuProps, Layout as AntLayout, Button, Divider, Modal } from 'antd';
 import React, { useState, useCallback, useMemo } from 'react';
 import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -34,18 +36,21 @@ function getItem(
 
 const Layout = ({ children }: LayoutProps) => {
     const [collapsed, setCollapsed] = useState(false);
+    const [logInOpen, setLogInOpen] = useState(false);
+    const [signUpOpen, setSignUpOpen] = useState(false);
+
     const router = useRouter();
   
     const onButtonClick = useCallback(() => {
-      setCollapsed(!collapsed)
+      setCollapsed(!collapsed);
     }, [collapsed]);
 
     const menuItems = useMemo(() => {
         return [
             getItem('Home', '1', <HomeFilled />),
             getItem('Player Database', '2', <DatabaseFilled />)
-        ]
-    }, [])
+        ];
+    }, []);
 
     const selectedPage = useMemo(() => {
         const route = router.asPath;
@@ -53,11 +58,11 @@ const Layout = ({ children }: LayoutProps) => {
             case '/':
                 return ['1'];
             case '/PlayerDatabase':
-                return ['2']
+                return ['2'];
             default:
                 return [];
         }
-    }, [router.asPath])
+    }, [router.asPath]);
 
     const onMenuItemClick = useCallback((e: MenuInfo) => {
         switch(e.key) {
@@ -68,7 +73,31 @@ const Layout = ({ children }: LayoutProps) => {
                 router.push('/PlayerDatabase');
                 break;
         }
-    }, [router])
+    }, [router]);
+
+    const renderHeaderAuth = useMemo(() => {
+        return (
+            <div style={{ float: 'right' }}>
+                <Button type="link" onClick={() => {setLogInOpen(true);}}>Log In</Button>
+                <Divider type="vertical" />
+                <Button type="link" onClick={() => {setSignUpOpen(true);}}>Sign Up</Button>
+            </div>
+        );
+    }, []);
+
+    const renderAuthModals = useMemo(() => {
+        return (
+            <>
+                <Modal title="Log In" open={logInOpen}>
+                    <p>Login</p>
+                </Modal>
+                <Modal title="Sign Up" open={signUpOpen}>
+                    <p>Signup</p>
+                </Modal>
+            </>
+            
+        );
+    }, [logInOpen, signUpOpen]);
 
     return (
         <AntLayout>
@@ -82,6 +111,7 @@ const Layout = ({ children }: LayoutProps) => {
                         className: 'trigger',
                         onClick: onButtonClick,
                     })}
+                    {renderHeaderAuth}
                 </Header>
                 <Content
                         style={{
@@ -91,11 +121,12 @@ const Layout = ({ children }: LayoutProps) => {
                         background: '#ffffff',
                     }}
                 >
+                    {renderAuthModals}
                     {children} 
                 </Content>
             </AntLayout>
         </AntLayout>
-    )
-}
+    );
+};
 
 export default Layout;

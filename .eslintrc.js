@@ -24,5 +24,7 @@ module.exports = {
     "rules": {
         "react/react-in-jsx-scope": "off",
         "react-hooks/exhaustive-deps": "warn",
+        "react/jsx-indent": ["error", 4],
+        "semi": [2, "always"],
     }
-}
+};
