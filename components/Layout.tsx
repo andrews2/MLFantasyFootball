@@ -75,29 +75,46 @@ const Layout = ({ children }: LayoutProps) => {
         }
     }, [router]);
 
+    //callbacks for auth buttons
+    const onLogInClick = useCallback(() => {
+        setLogInOpen(true);
+    }, []);
+
+    const onSignUpClick = useCallback(() => {
+        setSignUpOpen(true);
+    }, []);
+
+    const onLogInCancel = useCallback(() => {
+        setLogInOpen(false);
+    }, []);
+
+    const onSignUpCancel = useCallback(() => {
+        setSignUpOpen(false);
+    }, []);
+
     const renderHeaderAuth = useMemo(() => {
         return (
             <div style={{ float: 'right' }}>
-                <Button type="link" onClick={() => {setLogInOpen(true);}}>Log In</Button>
+                <Button type="link" onClick={onLogInClick}>Log In</Button>
                 <Divider type="vertical" />
-                <Button type="link" onClick={() => {setSignUpOpen(true);}}>Sign Up</Button>
+                <Button type="link" onClick={onSignUpClick}>Sign Up</Button>
             </div>
         );
-    }, []);
+    }, [onLogInClick, onSignUpClick]);
 
     const renderAuthModals = useMemo(() => {
         return (
             <>
-                <Modal title="Log In" open={logInOpen}>
+                <Modal title="Log In" open={logInOpen} onCancel={onLogInCancel}>
                     <p>Login</p>
                 </Modal>
-                <Modal title="Sign Up" open={signUpOpen}>
+                <Modal title="Sign Up" open={signUpOpen} onCancel={onSignUpCancel}>
                     <p>Signup</p>
                 </Modal>
             </>
             
         );
-    }, [logInOpen, signUpOpen]);
+    }, [logInOpen, onLogInCancel, onSignUpCancel, signUpOpen]);
 
     return (
         <AntLayout>
