@@ -14,7 +14,7 @@ const Home = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username: 'test'}),
+      body: JSON.stringify({ username: 'Admin'}),
     })
     .then(res => res.json())
     .then(data => {
