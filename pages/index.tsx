@@ -9,10 +9,16 @@ const Home = () => {
   const [textData, setData] = useState('');
 
   useEffect(() => {
-    fetch('/api/test')
+    fetch('/api/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: 'test'}),
+    })
     .then(res => res.json())
     .then(data => {
-        setData(JSON.stringify(data));
+          setData(JSON.stringify(data));
     });
 }, []);
 
