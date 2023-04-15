@@ -5,7 +5,7 @@
 * creates global layout used for all pages
 */
 import { Menu, MenuProps, Layout as AntLayout, Button, Divider } from 'antd';
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { MenuInfo } from 'rc-menu/lib/interface';
