@@ -5,7 +5,7 @@
 * creates global layout used for all pages
 */
 import { Menu, MenuProps, Layout as AntLayout, Button, Divider } from 'antd';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { MenuInfo } from 'rc-menu/lib/interface';
@@ -50,11 +50,13 @@ const Layout = ({ children }: LayoutProps) => {
     }, [collapsed]);
 
     const menuItems = useMemo(() => {
-        return [
-            getItem('Home', '1', <HomeFilled />),
-            getItem('Player Database', '2', <DatabaseFilled />)
-        ];
-    }, []);
+        const items = [getItem('Home', '1', <HomeFilled />),];
+        if (session) {
+            items.push(getItem('Player Database', '2', <DatabaseFilled />));
+        }
+        
+        return items;
+    }, [session]);
 
     const selectedPage = useMemo(() => {
         const route = router.asPath;
@@ -100,6 +102,8 @@ const Layout = ({ children }: LayoutProps) => {
         if (session) {
             return (
                 <div style={{ float: 'right' }}>
+                    <Button type="link" >{session.user?.name}</Button>
+                    <Divider type="vertical" />
                     <Button type="link" onClick={() => signOut({ redirect: false })}>Sign Out</Button>
                 </div>
             );

@@ -12,7 +12,7 @@ export const authOptions = {
                 username: { label: "Username", type: "text", placeholder: "jsmith" },
                 password: { label: "Password", type: "password" }
             },
-            async authorize(credentials, req) {
+            async authorize(credentials) {
                 const res = await fetch(`${server}/api/userlogin`, {
                     method: 'POST',
                     body: JSON.stringify(credentials),
@@ -28,5 +28,11 @@ export const authOptions = {
             }
         })
     ],
+
+    pages: {
+        signIn: '/',
+        signOut: '/',
+        error: '/',
+    }
   };
   export default NextAuth(authOptions);

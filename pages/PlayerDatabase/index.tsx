@@ -2,12 +2,14 @@
 * Created by Andrew Shipman
 * 4/12/2023
 */
-import { Input, Layout, Table, Card, Space } from "antd";
+import { Input, Layout, Table, Card, Space, Typography } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { ColumnsType } from 'antd/es/table';
+import { useSession } from "next-auth/react";
 
 const { Sider, Content } = Layout;
+const { Text } = Typography;
 
 interface TableDataType {
     key: string;
@@ -17,6 +19,7 @@ interface TableDataType {
 
 const PlayerDatabase = () => {
     const [players, setPlayers] = useState<Record<string, string>[] | null>(null);
+    const { data: session } = useSession();
 
     useEffect(() => {
         fetch('/api/players')
@@ -56,6 +59,10 @@ const PlayerDatabase = () => {
         }
         return [];
     }, [players]);
+
+    if (!session) {
+        return <Text>you do not have permission to view this page...</Text>;
+    }
 
     return (
         <Layout style={{background: '#ffffff', height: '100%'}}>

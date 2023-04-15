@@ -4,9 +4,9 @@
 *
 * creates global layout used for all pages
 */
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
-import { Modal, Input, Space } from "antd";
+import { Modal, Input, Space, Typography } from "antd";
 import { useCallback, useState } from "react";
 
 
@@ -17,13 +17,17 @@ type AuthModalsProps = {
     onSignUpCancel: () => void;
 }
 
+const { Text } = Typography;
+
 const AuthModals = ({logInOpen, signUpOpen, onLogInCancel, onSignUpCancel}: AuthModalsProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [errorText, setErrorText] = useState('');
 
     const closeLoginForm = useCallback(() => {
         setUsername('');
         setPassword('');
+        setErrorText('');
         onLogInCancel();
     }, [onLogInCancel]);
 
@@ -35,16 +39,19 @@ const AuthModals = ({logInOpen, signUpOpen, onLogInCancel, onSignUpCancel}: Auth
           });
         if (attempt?.ok) {
             closeLoginForm();
-        }
+        } else if (attempt?.error) (
+            setErrorText('Login credentials were incorrect.')
+        );
     }, [closeLoginForm, password, username]);
 
     return (
         (
             <>
-                <Modal title="Log In" open={logInOpen} onCancel={closeLoginForm} onOk={onLoginSubmit} okText={'Login'}>
+                <Modal title="Log In" open={logInOpen} onCancel={closeLoginForm} onOk={onLoginSubmit} okText={'Log in'} okButtonProps={{disabled: !username || !password}}>
                     <Space direction="vertical" style={{ width: '100%' }}>
                         <Input placeholder='Username' value={username} onChange={(e) => {setUsername(e.target.value);}}/>
                         <Input.Password placeholder='Password' value={password} onChange={(e) => {setPassword(e.target.value);}} />
+                        <Text type="danger">{errorText}</Text>
                     </Space>
                 </Modal>
                 <Modal title="Sign Up" open={signUpOpen} onCancel={onSignUpCancel}>
