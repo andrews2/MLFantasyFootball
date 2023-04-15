@@ -4,11 +4,14 @@
 *
 * creates global layout used for all pages
 */
-import { Menu, MenuProps, Layout as AntLayout, Button, Divider, Modal } from 'antd';
+import { Menu, MenuProps, Layout as AntLayout, Button, Divider } from 'antd';
 import React, { useState, useCallback, useMemo } from 'react';
 import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { MenuInfo } from 'rc-menu/lib/interface';
+import AuthModals from './AuthModals';
+import { useSession, signOut } from "next-auth/react";
+
 
 const { Header, Sider, Content } = AntLayout;
 
@@ -38,6 +41,7 @@ const Layout = ({ children }: LayoutProps) => {
     const [collapsed, setCollapsed] = useState(false);
     const [logInOpen, setLogInOpen] = useState(false);
     const [signUpOpen, setSignUpOpen] = useState(false);
+    const { data: session } = useSession();
 
     const router = useRouter();
   
@@ -93,28 +97,23 @@ const Layout = ({ children }: LayoutProps) => {
     }, []);
 
     const renderHeaderAuth = useMemo(() => {
-        return (
-            <div style={{ float: 'right' }}>
-                <Button type="link" onClick={onLogInClick}>Log In</Button>
-                <Divider type="vertical" />
-                <Button type="link" onClick={onSignUpClick}>Sign Up</Button>
-            </div>
+        if (session) {
+            return (
+                <div style={{ float: 'right' }}>
+                    <Button type="link" onClick={() => signOut({ redirect: false })}>Sign Out</Button>
+                </div>
+            );
+        } else {
+            return (
+                <div style={{ float: 'right' }}>
+                    <Button type="link" onClick={onLogInClick}>Log In</Button>
+                    <Divider type="vertical" />
+                    <Button type="link" onClick={onSignUpClick}>Sign Up</Button>
+                </div>
         );
-    }, [onLogInClick, onSignUpClick]);
-
-    const renderAuthModals = useMemo(() => {
-        return (
-            <>
-                <Modal title="Log In" open={logInOpen} onCancel={onLogInCancel}>
-                    <p>Login</p>
-                </Modal>
-                <Modal title="Sign Up" open={signUpOpen} onCancel={onSignUpCancel}>
-                    <p>Signup</p>
-                </Modal>
-            </>
-            
-        );
-    }, [logInOpen, onLogInCancel, onSignUpCancel, signUpOpen]);
+        }
+        
+    }, [onLogInClick, onSignUpClick, session]);
 
     return (
         <AntLayout>
@@ -138,7 +137,7 @@ const Layout = ({ children }: LayoutProps) => {
                         background: '#ffffff',
                     }}
                 >
-                    {renderAuthModals}
+                    <AuthModals logInOpen={logInOpen} signUpOpen={signUpOpen} onLogInCancel={onLogInCancel} onSignUpCancel={onSignUpCancel} />
                     {children} 
                 </Content>
             </AntLayout>

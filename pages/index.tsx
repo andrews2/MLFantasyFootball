@@ -4,9 +4,11 @@
 */
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 const Home = () => {
   const [textData, setData] = useState('');
+  const { data: session } = useSession();
 
   useEffect(() => {
     fetch('/api/user', {
@@ -25,7 +27,7 @@ const Home = () => {
 
   return (
       <>
-          <p>{textData}</p>
+          <p>{session?.user?.name}</p>
       </>
   );
 };
