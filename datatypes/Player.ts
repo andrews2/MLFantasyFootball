@@ -1,3 +1,7 @@
+/**
+ * Created By Andrew Shipman
+ * 4/15/2023
+ */
 export type Player = {
     name: string;
     position: string;

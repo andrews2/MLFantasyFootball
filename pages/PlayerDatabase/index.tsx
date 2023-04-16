@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { ColumnsType } from 'antd/es/table';
 import { useSession } from "next-auth/react";
-import { Player } from "../../types/player";
+import { Player } from "@/datatypes/Player";
 
 const { Sider, Content } = Layout;
 const { Text } = Typography;
