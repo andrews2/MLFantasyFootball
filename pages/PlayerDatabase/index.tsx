@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import type { ColumnsType } from 'antd/es/table';
 import { useSession } from "next-auth/react";
+import { Player } from "@/types/player";
 
 const { Sider, Content } = Layout;
 const { Text } = Typography;
@@ -18,14 +19,17 @@ interface TableDataType {
 }
 
 const PlayerDatabase = () => {
-    const [players, setPlayers] = useState<Record<string, string>[] | null>(null);
+    const [players, setPlayers] = useState<Player[] | null>(null);
     const { data: session } = useSession();
+    const [playerDataLoading, setPlayerDataLoading] = useState(false);
 
     useEffect(() => {
-        fetch('/api/players')
+        setPlayerDataLoading(true);
+        fetch('/api/allplayers')
         .then(res => res.json())
         .then(data => {
-            setPlayers(JSON.parse(data));
+            setPlayerDataLoading(false);
+                setPlayers(data as Player[]);
         });
     }, []);
 
@@ -34,7 +38,8 @@ const PlayerDatabase = () => {
             {
                 title: 'Name', 
                 dataIndex: 'name', 
-                key: 'name', 
+                key: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name), 
             }, 
             {
                 title: 'Position',
@@ -74,7 +79,7 @@ const PlayerDatabase = () => {
                 </Card>
             </Sider>
             <Content style={{ marginLeft: '16px' }}> 
-                <Table sticky columns={tableColumns} dataSource={tableData}/>
+                <Table sticky columns={tableColumns} dataSource={tableData} scroll={{ y: 'calc(70vh - 4em)' }} loading={playerDataLoading}/>
             </Content>
         </Layout>
     );

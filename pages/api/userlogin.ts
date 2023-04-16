@@ -30,7 +30,7 @@
              pgClient.end();
          });
      } else {
-         res.status(405);
+         res.status(404);
      }
      
  }
