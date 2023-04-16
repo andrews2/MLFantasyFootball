@@ -21,3 +21,7 @@ body {
   margin: 16px;
   background: #001529;
 }
+
+.ant-table-body {
+  min-height: calc(72vh - 4em);
+}

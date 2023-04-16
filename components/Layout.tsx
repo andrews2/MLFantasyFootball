@@ -6,7 +6,7 @@
 */
 import { Menu, MenuProps, Layout as AntLayout, Button, Divider } from 'antd';
 import React, { useState, useCallback, useMemo } from 'react';
-import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import AuthModals from './AuthModals';
@@ -102,6 +102,7 @@ const Layout = ({ children }: LayoutProps) => {
         if (session) {
             return (
                 <div style={{ float: 'right' }}>
+                    <UserOutlined />
                     <Button type="link" >{session.user?.name}</Button>
                     <Divider type="vertical" />
                     <Button type="link" onClick={() => signOut({ redirect: false })}>Sign Out</Button>
