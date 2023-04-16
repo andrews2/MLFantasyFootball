@@ -8,7 +8,7 @@
  export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const pgClient = new PGClient();
          pgClient.connect();
-         const query = `SELECT player_id, Name, Position FROM players`;
+         const query = `SELECT player_id, Name, Position, Years FROM players`;
          pgClient.query(query, (err, result) => {
             if (err) {
                 res.status(400).send({ message: 'Error' });

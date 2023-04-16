@@ -49,8 +49,8 @@ const AuthModals = ({logInOpen, signUpOpen, onLogInCancel, onSignUpCancel}: Auth
             <>
                 <Modal title="Log In" open={logInOpen} onCancel={closeLoginForm} onOk={onLoginSubmit} okText={'Log in'} okButtonProps={{disabled: !username || !password}}>
                     <Space direction="vertical" style={{ width: '100%' }}>
-                        <Input placeholder='Username' value={username} onChange={(e) => {setUsername(e.target.value);}}/>
-                        <Input.Password placeholder='Password' value={password} onChange={(e) => {setPassword(e.target.value);}} />
+                        <Input name="username" placeholder='Username' value={username} onChange={(e) => {setUsername(e.target.value);}}/>
+                        <Input.Password name="password" placeholder='Password' value={password} onChange={(e) => {setPassword(e.target.value);}} />
                         <Text type="danger">{errorText}</Text>
                     </Space>
                 </Modal>

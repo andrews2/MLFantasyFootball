@@ -5,10 +5,13 @@
 import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import PermissionDenied from "@/components/PermissionDenied";
 
 const Player = () => {
     const router = useRouter();
     const [data, setData] = useState<Player | null>();
+    const { data: session } = useSession();
 
     useEffect(() => {
         const { id } = router.query;
@@ -24,6 +27,10 @@ const Player = () => {
         });
         }
     }, [router.query]);
+
+    if (!session) {
+        return <PermissionDenied />;
+    }
 
     return <p>{JSON.stringify(data)}</p>;
 };

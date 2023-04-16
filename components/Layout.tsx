@@ -102,8 +102,7 @@ const Layout = ({ children }: LayoutProps) => {
         if (session) {
             return (
                 <div style={{ float: 'right' }}>
-                    <UserOutlined />
-                    <Button type="link" >{session.user?.name}</Button>
+                    <Button icon={<UserOutlined />} type="link" >{session.user?.name}</Button>
                     <Divider type="vertical" />
                     <Button type="link" onClick={() => signOut({ redirect: false })}>Sign Out</Button>
                 </div>
@@ -123,7 +122,8 @@ const Layout = ({ children }: LayoutProps) => {
     return (
         <AntLayout>
             <Sider trigger={null} collapsible collapsed={collapsed} style={{ height: '100vh', position: 'sticky', top: 0, zIndex: 1 }}>
-                <div className='logo' />
+                <div className='logo'>
+                </div>
                 <Menu theme="dark" items={menuItems} mode="inline" defaultSelectedKeys={selectedPage} onClick={onMenuItemClick}/>
             </Sider>
             <AntLayout className='site-layout'>
