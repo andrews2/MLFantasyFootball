@@ -11,6 +11,7 @@ import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
 import PermissionDenied from "@/components/PermissionDenied";
 import { Dayjs } from 'dayjs';
+import { apiRequest, API_ENDPOINTS } from "@/FrontendAPI/API";
 
 const { Sider, Content } = Layout;
 
@@ -32,11 +33,9 @@ const PlayerDatabase = () => {
 
     useEffect(() => {
         setPlayerDataLoading(true);
-        fetch('/api/allplayers')
-        .then(res => res.json())
-        .then(data => {
+        apiRequest(API_ENDPOINTS.ALL_PLAYERS, data => {
             setPlayerDataLoading(false);
-                setPlayers(data as Player[]);
+            setPlayers(data as Player[]);
         });
     }, []);
 
