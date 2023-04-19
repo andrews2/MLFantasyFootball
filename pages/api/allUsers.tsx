@@ -1,18 +1,19 @@
 /**
  * Created By Andrew Shipman
- * 4/15/2023
+ * 4/16/2023
  */
- import { PGClient } from "@/classes/PGClient";
- import { NextApiRequest, NextApiResponse } from "next";
- import { getServerSession } from 'next-auth/next';
- import { authOptions } from "./auth/[...nextauth]";
 
- export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getServerSession(req, res, authOptions); 
-    if (session) {
+import { PGClient } from "@/classes/PGClient";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from "./auth/[...nextauth]";
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getServerSession(req, res, authOptions);
+    if (session?.user?.role === 'admin') {
         const pgClient = new PGClient();
         pgClient.connect();
-        const query = `SELECT player_id, Name, Position, Years FROM players`;
+        const query = 'SELECT * FROM Users';
         pgClient.query(query, (err, result) => {
             if (err) {
                 res.status(400).send({ message: 'Error' });
@@ -27,4 +28,7 @@
             pgClient.end();
         });
     }
- }
+    else {
+        res.status(400).send({ message: 'unauthorized' });
+    }
+}

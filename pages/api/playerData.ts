@@ -4,9 +4,12 @@
  */
  import { PGClient } from "@/classes/PGClient";
  import { NextApiRequest, NextApiResponse } from "next";
+ import { getServerSession } from 'next-auth/next';
+import { authOptions } from "./auth/[...nextauth]";
 
- export default function handler(req: NextApiRequest, res: NextApiResponse) { 
-    if (req.method === 'POST') {
+ export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getServerSession(req, res, authOptions); 
+    if (req.method === 'POST' && session) {
         const player_id = req.body;
         const pgClient = new PGClient();
          pgClient.connect();
