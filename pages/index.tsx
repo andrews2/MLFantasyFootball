@@ -2,13 +2,14 @@
 * Created by Andrew Shipman
 * 4/12/2023
 */
-import { useSession } from "next-auth/react";
+
 import { Typography, Space } from "antd";
+import { useUserSession } from "@/hooks/useUserSession";
 
 const { Text } = Typography;
 
 const Home = () => {
-  const { data: session } = useSession();
+  const { session } = useUserSession();
 
 
   return (

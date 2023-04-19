@@ -6,12 +6,12 @@ import { Input, Layout, Table, Card, Space, DatePicker } from "antd";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { SearchOutlined, ToolOutlined } from "@ant-design/icons";
 import type { ColumnsType } from 'antd/es/table';
-import { useSession } from "next-auth/react";
 import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
 import PermissionDenied from "@/components/PermissionDenied";
 import { Dayjs } from 'dayjs';
 import { apiRequest, API_ENDPOINTS } from "@/FrontendAPI/API";
+import { useUserSession } from "@/hooks/useUserSession";
 
 const { Sider, Content } = Layout;
 
@@ -24,7 +24,7 @@ interface TableDataType {
 
 const PlayerDatabase = () => {
     const [players, setPlayers] = useState<Player[] | null>(null);
-    const { data: session } = useSession();
+    const { session } = useUserSession();
     const [playerDataLoading, setPlayerDataLoading] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [years, setYears] = useState<null | (Dayjs | null)[]>([]);

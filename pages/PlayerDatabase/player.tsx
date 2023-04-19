@@ -5,19 +5,19 @@
 import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
 import PermissionDenied from "@/components/PermissionDenied";
-import { Card, Layout, Table, Typography } from 'antd';
+import { Layout, Table, Typography } from 'antd';
 import { apiRequest, API_ENDPOINTS } from "@/FrontendAPI/API";
+import { useUserSession } from "@/hooks/useUserSession";
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
 const { Header, Content } = Layout;
 
 const Player = () => {
     const router = useRouter();
     const [player, setPlayer] = useState<Player | null>();
     const [dataLoading, setDataLoading] = useState(true);
-    const { data: session } = useSession();
+    const { session } = useUserSession();
 
     const playerDataCallback = useCallback((data: unknown) => {
         setPlayer(data as Player);
@@ -58,7 +58,7 @@ const Player = () => {
                     if (player?.stats) { 
                         dataRow = {
                             ... dataRow,
-                            [key]: player?.stats[player.years[0]][key],
+                            [key]: player?.stats[year][key],
                         };
                     }
                 });
@@ -78,7 +78,7 @@ const Player = () => {
                 <Header style={{ padding: 0, background: '#ffffff' }}>
                     <Title level={2}>{player?.name}</Title>
                 </Header>
-                <Content>
+                <Content style={{ marginTop: '24px', background: '#ffffff', padding: 0}}>
                     <Table columns={tableColumns} dataSource={tableData} scroll={{x: '100%'}} loading={dataLoading} pagination={false}/>
                 </Content>
             </Layout>

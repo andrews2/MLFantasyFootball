@@ -6,11 +6,12 @@
 */
 import { Menu, MenuProps, Layout as AntLayout, Button, Divider } from 'antd';
 import React, { useState, useCallback, useMemo } from 'react';
-import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons';
+import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined, SolutionOutlined, UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import AuthModals from './AuthModals';
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { useUserSession } from '@/hooks/useUserSession';
 
 
 const { Header, Sider, Content } = AntLayout;
@@ -41,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
     const [collapsed, setCollapsed] = useState(false);
     const [logInOpen, setLogInOpen] = useState(false);
     const [signUpOpen, setSignUpOpen] = useState(false);
-    const { data: session } = useSession();
+    const { session } = useUserSession();
 
     const router = useRouter();
   
@@ -54,6 +55,9 @@ const Layout = ({ children }: LayoutProps) => {
         if (session) {
             items.push(getItem('Player Database', '2', <DatabaseFilled />));
         }
+        if (session?.user.role === 'admin') {
+            items.push(getItem('Admin', '9', <SolutionOutlined />));
+        }
         
         return items;
     }, [session]);
@@ -65,6 +69,8 @@ const Layout = ({ children }: LayoutProps) => {
                 return ['1'];
             case '/PlayerDatabase':
                 return ['2'];
+            case '/Admin':
+                return ['9'];
             default:
                 return [];
         }
@@ -77,6 +83,9 @@ const Layout = ({ children }: LayoutProps) => {
                 break;
             case '2':
                 router.push('/PlayerDatabase');
+                break;
+            case '9':
+                router.push('/Admin');
                 break;
         }
     }, [router]);
