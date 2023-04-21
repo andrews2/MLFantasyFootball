@@ -4,7 +4,6 @@
 */
 
 import { Typography, Space } from "antd";
-import { useUserSession } from "@/hooks/useUserSession";
 
 const { Text } = Typography;
 
