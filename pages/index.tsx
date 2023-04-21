@@ -9,12 +9,9 @@ import { useUserSession } from "@/hooks/useUserSession";
 const { Text } = Typography;
 
 const Home = () => {
-  const { session } = useUserSession();
-
 
   return (
       <>
-          <p>{JSON.stringify(session?.user)}</p>
           <Space direction="vertical" size="large">
               <Text>Welcome to Football Forecaster, the ultimate destination for anyone looking to gain an edge in fantasy football drafts. Our web app is designed to help you navigate the complex world of fantasy football with ease, using advanced data analytics and machine learning to provide you with the insights you need to make informed decisions. With Football Forecaster, you&apos;ll have access to the latest player projections, rankings, and other key data points, allowing you to build a winning team and stay ahead of the competition.</Text>
               <Text>At Football Forecaster, we know that fantasy football is all about data. That&apos;s why we&apos;ve made it our mission to gather and analyze the most up-to-date data available, using advanced machine learning algorithms to predict player performance and identify key trends. Whether you&apos;re a seasoned veteran or a newcomer to the world of fantasy football, our powerful tools and resources can help you make the most informed decisions possible.</Text>

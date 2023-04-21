@@ -6,16 +6,21 @@ import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import PermissionDenied from "@/components/PermissionDenied";
-import { Layout, Table, Typography } from 'antd';
+import { Collapse, Layout, Space, Table, Typography } from 'antd';
 import { apiRequest, API_ENDPOINTS } from "@/FrontendAPI/API";
 import { useUserSession } from "@/hooks/useUserSession";
+import DataVisualization from "@/components/DataVisualization";
+import type { ColumnsType } from 'antd/es/table';
+import { LineChartOutlined, TableOutlined } from "@ant-design/icons";
+
 
 const { Title } = Typography;
 const { Header, Content } = Layout;
+const { Panel } = Collapse;
 
 const Player = () => {
     const router = useRouter();
-    const [player, setPlayer] = useState<Player | null>();
+    const [player, setPlayer] = useState<Player | null>(null);
     const [dataLoading, setDataLoading] = useState(true);
     const { session } = useUserSession();
 
@@ -31,17 +36,20 @@ const Player = () => {
         }
     }, [playerDataCallback, router.query]);
 
-    const tableColumns = useMemo(() => {
+    const tableColumns = useMemo((): ColumnsType<Record<string, string>> => {
         if (player?.stats) {
             const columns = Object.keys(player.stats[player.years[0]]).map(key =>  ({
-                title: key,
+                title: key.toUpperCase().replaceAll('_', ' '),
                 dataIndex: key, 
                 key: key,
+                width: 200,
             }));
             return [{
                 title: 'Year',
                 dataIndex: 'year',
                 key: 'year',
+                width: 100,
+                fixed: 'left',
             }, ...columns];
         }
         return [];
@@ -50,7 +58,8 @@ const Player = () => {
     const tableData = useMemo(() => {
         if (player?.stats) {
             const dataArray = [];
-            for (const year of player.years) {
+            const yearArray = player.years;
+            for (const year of yearArray) {
                 let dataRow = {
                     year: year,
                 };
@@ -68,6 +77,8 @@ const Player = () => {
         }
     }, [player?.stats, player?.years]);
 
+
+
     if (!session) {
         return <PermissionDenied />;
     }
@@ -79,7 +90,14 @@ const Player = () => {
                     <Title level={2}>{player?.name}</Title>
                 </Header>
                 <Content style={{ marginTop: '24px', background: '#ffffff', padding: 0}}>
-                    <Table columns={tableColumns} dataSource={tableData} scroll={{x: '100%'}} loading={dataLoading} pagination={false}/>
+                    <Collapse defaultActiveKey={['1']} ghost size="large">
+                        <Panel header={<Space><LineChartOutlined />Data Visualization</Space>} key="1">
+                            <DataVisualization player={player} />
+                        </Panel>
+                        <Panel header={<Space><TableOutlined />Statistics</Space>} key="2">
+                            <Table columns={tableColumns} dataSource={tableData} scroll={{ x: '100%', y: '70vh' }} loading={dataLoading} pagination={false}/>
+                        </Panel>
+                    </Collapse>    
                 </Content>
             </Layout>
         </>

@@ -130,13 +130,13 @@ const Layout = ({ children }: LayoutProps) => {
 
     return (
         <AntLayout>
-            <Sider trigger={null} collapsible collapsed={collapsed} style={{ height: '100vh', position: 'sticky', top: 0, zIndex: 1 }}>
+            <Sider trigger={null} collapsible collapsed={collapsed} style={{ height: '100vh', position: 'sticky', top: 0, zIndex: 10 }}>
                 <div className='logo'>
                 </div>
                 <Menu theme="dark" items={menuItems} mode="inline" defaultSelectedKeys={selectedPage} onClick={onMenuItemClick}/>
             </Sider>
             <AntLayout className='site-layout'>
-                <Header style={{ padding: 0, background: '#ffffff', position: 'sticky', top: 0, zIndex: 1 }}>
+                <Header style={{ padding: 0, background: '#ffffff', position: 'sticky', top: 0, zIndex: 10 }}>
                     {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                         className: 'trigger',
                         onClick: onButtonClick,

@@ -14,11 +14,14 @@ import { useEffect, useMemo, useState } from "react";
 const Admin = () => {
     const [users, setUsers] = useState<Record<string, string>[] | undefined>();
     const { session } = useUserSession();
+    const [usersLoading, setUsersLoading] = useState(false);
 
     useEffect(() => {
         if (session?.user?.role == 'admin') {
+            setUsersLoading(true);
             apiRequest(API_ENDPOINTS.ALL_USERS, data => {
                 setUsers(data as Record<string, string>[]);
+                setUsersLoading(false);
             });
         }
     }, [session?.user?.role]);
@@ -69,7 +72,7 @@ const Admin = () => {
 
 
     return (
-        <Table bordered columns={tableColumns} dataSource={users}/>
+        <Table bordered columns={tableColumns} dataSource={users} loading={usersLoading}/>
     );
 };
 
