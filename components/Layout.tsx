@@ -64,13 +64,13 @@ const Layout = ({ children }: LayoutProps) => {
 
     const selectedPage = useMemo(() => {
         const route = router.asPath;
-        switch (route) {
-            case '/':
-                return ['1'];
-            case '/PlayerDatabase':
+        switch (true) {
+            case route.startsWith('/PlayerDatabase'):
                 return ['2'];
-            case '/Admin':
+            case route.startsWith('/Admin'):
                 return ['9'];
+            case route.startsWith('/'):
+                return ['1'];
             default:
                 return [];
         }

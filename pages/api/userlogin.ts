@@ -19,6 +19,10 @@
                  if (rows.length  === 1) {
                      if (password === rows[0].password) {
                         delete rows[0].password;
+                        const loginTimeQuery = `UPDATE users SET last_login = current_timestamp WHERE user_id = ${rows[0].user_id}`;
+                        pgClient.query(loginTimeQuery , () => {
+                            return;
+                        });
                         res.status(200).json(rows[0]);
                      } else {
                         res.status(400).send({ message: 'Incorrect Password' });

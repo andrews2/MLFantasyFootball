@@ -24,12 +24,6 @@ const DataVisualization = ({ player }: DataVisualizationProps) => {
         } else if (player?.position === 'WR') {
             setMainStat('receiving_yards');
         }
-        const statOptions = [];
-        if (player?.stats) {
-            for (const stat of Object.keys(player?.stats[player.years[0]])) {
-                statOptions.push(stat.toUpperCase().replaceAll('_', ' '));
-            }
-        }
     }, [player?.position, player?.stats, player?.years]);
 
     const lineGraphOptions = useMemo(() => {
@@ -48,7 +42,7 @@ const DataVisualization = ({ player }: DataVisualizationProps) => {
             let maxValue = 0;
             for (const year of player.years) {
                 if (Number(player.stats[year][mainStat]) > maxValue) {
-                    maxValue = Number(player.stats[year][mainStat]);
+                    maxValue = Math.ceil(Number(player.stats[year][mainStat]) * 1000) / 1000;
                 }
                 const dataPoint = {
                     name: year,

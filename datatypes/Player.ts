@@ -8,4 +8,5 @@ export type Player = {
     position: string;
     years: string[];
     stats?: Record<string, Record<string, string>>;
+    injuries?: Record<string, string>[];
 }

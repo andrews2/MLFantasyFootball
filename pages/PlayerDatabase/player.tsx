@@ -4,17 +4,17 @@
 */
 import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import PermissionDenied from "@/components/PermissionDenied";
-import { Collapse, Layout, Space, Table, Typography } from 'antd';
+import { Card, Collapse, Layout, Space, Table, Timeline, Typography } from 'antd';
 import { apiRequest, API_ENDPOINTS } from "@/FrontendAPI/API";
 import { useUserSession } from "@/hooks/useUserSession";
 import DataVisualization from "@/components/DataVisualization";
 import type { ColumnsType } from 'antd/es/table';
-import { LineChartOutlined, TableOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, LineChartOutlined, QuestionCircleOutlined, TableOutlined, WarningOutlined } from "@ant-design/icons";
 
 
-const { Title } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { Header, Content } = Layout;
 const { Panel } = Collapse;
 
@@ -50,6 +50,8 @@ const Player = () => {
                 key: 'year',
                 width: 100,
                 fixed: 'left',
+                defaultSortOrder: 'ascend',
+                sorter: (a, b) => { return Number(a.year) > Number(b.year) ? -1 : 1; }
             }, ...columns];
         }
         return [];
@@ -77,6 +79,59 @@ const Player = () => {
         }
     }, [player?.stats, player?.years]);
 
+    const timelineData = useMemo(() => {
+        if (player?.injuries) {
+            let maxYear = 0;
+
+            for (const year of player.years) {
+                if (Number(year) > maxYear) {
+                    maxYear = Number(year);
+                }
+            }
+            return player.injuries.filter(injury => Number(injury.season) === maxYear).map(injury => {
+                const children: ReactNode[] = [];
+                if (injury.report_primary_injury.length > 0){
+                    children.push(<Paragraph>Primary Injury: {injury.report_primary_injury}</Paragraph>);
+                    children.push(<Paragraph>Status: {injury.report_status}</Paragraph>);
+                }
+                if (injury.practice_primary_injury.length > 0) {
+                    children.push(<Paragraph>Practice Injury: {injury.practice_primary_injury}</Paragraph>);
+                    children.push(<Paragraph>Practice Status: {injury.practice_status}</Paragraph>);
+                }
+
+                let colorAndIcon = {};
+
+                switch (injury.report_status) {
+                    case 'Out':
+                        colorAndIcon = {
+                            color: 'red',
+                            dot: <WarningOutlined />,
+                        };
+                        break;
+                    case 'Questionable':
+                        colorAndIcon = {
+                            color: 'blue',
+                            dot: <QuestionCircleOutlined />,
+                        };
+                        break;
+                    default:
+                        colorAndIcon = {
+                            color: 'green',
+                            dot: <CheckCircleOutlined />,
+                        };
+                        break;
+                }
+                return {
+                    ...colorAndIcon,
+                    label: `${maxYear}, Week ${Number(injury.week)}`,
+                    children: (<>{...children}</>),
+                };
+            });
+
+        }
+        return [];
+    }, [player?.injuries, player?.years]);
+
 
 
     if (!session) {
@@ -95,7 +150,10 @@ const Player = () => {
                             <DataVisualization player={player} />
                         </Panel>
                         <Panel header={<Space><TableOutlined />Statistics</Space>} key="2">
-                            <Table columns={tableColumns} dataSource={tableData} scroll={{ x: '100%', y: '70vh' }} loading={dataLoading} pagination={false}/>
+                            <Table columns={tableColumns} dataSource={tableData} bordered scroll={{ x: '100%', y: '70vh' }} loading={dataLoading} pagination={false}/>
+                        </Panel>
+                        <Panel header={<Space><WarningOutlined />Injury Report</Space>} key="3">
+                            <Timeline items={timelineData} mode="left"/>
                         </Panel>
                     </Collapse>    
                 </Content>
