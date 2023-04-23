@@ -6,7 +6,7 @@ import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import PermissionDenied from "@/components/PermissionDenied";
-import { Card, Collapse, Layout, Space, Table, Timeline, Typography } from 'antd';
+import { Collapse, Layout, Space, Table, Timeline, Typography } from 'antd';
 import { apiRequest, API_ENDPOINTS } from "@/FrontendAPI/API";
 import { useUserSession } from "@/hooks/useUserSession";
 import DataVisualization from "@/components/DataVisualization";
@@ -14,7 +14,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { CheckCircleOutlined, LineChartOutlined, QuestionCircleOutlined, TableOutlined, WarningOutlined } from "@ant-design/icons";
 
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 const { Header, Content } = Layout;
 const { Panel } = Collapse;
 

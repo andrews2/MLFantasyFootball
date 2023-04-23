@@ -113,7 +113,7 @@ const PlayerDatabase = () => {
             <Sider style={{background: '#ffffff' }} width="25%">
                 <Card title={<><ToolOutlined/> Tools</>} style={{ height: '100%' }}>
                     <Space direction="vertical" size={32} style={{ width: '100% '}}>
-                        <Input name="playerSearch" prefix={<SearchOutlined />} placeholder="Search..." onChange={onSearchChange} value={searchText} allowClear/>
+                        <Input autoComplete="disabled" prefix={<SearchOutlined />} placeholder="Search..." onChange={onSearchChange} value={searchText} allowClear/>
                         <DatePicker.RangePicker picker="year" onChange={onYearChange} style={{ width: '100%' }}/>
                     </Space>
                 </Card>
