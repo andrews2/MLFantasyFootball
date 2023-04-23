@@ -6,8 +6,8 @@
 */
 import { signIn } from "next-auth/react";
 
-import { Modal, Input, Space, Typography } from "antd";
-import { useCallback, useState } from "react";
+import { Modal, Input, Space, Form, Button } from "antd";
+import { useCallback } from "react";
 
 
 type AuthModalsProps = {
@@ -17,42 +17,49 @@ type AuthModalsProps = {
     onSignUpCancel: () => void;
 }
 
-const { Text } = Typography;
-
 const AuthModals = ({logInOpen, signUpOpen, onLogInCancel, onSignUpCancel}: AuthModalsProps) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorText, setErrorText] = useState('');
 
     const closeLoginForm = useCallback(() => {
-        setUsername('');
-        setPassword('');
-        setErrorText('');
         onLogInCancel();
     }, [onLogInCancel]);
 
-    const onLoginSubmit = useCallback(async () => {
+    const onLoginSubmit = useCallback(async (values: Record<string, string>) => {
         const attempt = await signIn("credentials", {
-            username: username,
-            password: password,
+            username: values.username,
+            password: values.password,
             redirect: false,
           });
         if (attempt?.ok) {
             closeLoginForm();
-        } else if (attempt?.error) (
-            setErrorText('Login credentials were incorrect.')
-        );
-    }, [closeLoginForm, password, username]);
+        }
+    }, [closeLoginForm]);
 
     return (
         (
             <>
-                <Modal title="Log In" open={logInOpen} onCancel={closeLoginForm} onOk={onLoginSubmit} okText={'Log in'} okButtonProps={{disabled: !username || !password}}>
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                        <Input name="username" placeholder='Username' value={username} onChange={(e) => {setUsername(e.target.value);}}/>
-                        <Input.Password name="password" placeholder='Password' value={password} onChange={(e) => {setPassword(e.target.value);}} />
-                        <Text type="danger">{errorText}</Text>
-                    </Space>
+                <Modal title="Login" open={logInOpen} footer={null}>
+                    <Form
+                        name="loginForm"
+                        style={{ width: '100%'}}
+                        onFinish={onLoginSubmit}
+                    >
+                        <Form.Item name="username">
+                            <Input placeholder='Username'/>
+                        </Form.Item>
+                        <Form.Item name="password">
+                            <Input.Password name="password" placeholder='Password'/>
+                        </Form.Item>
+                        <Form.Item>
+                            <Space>
+                                <Button type="primary" htmlType="submit">
+                                    Login
+                                </Button>
+                                <Button htmlType="button" onClick={closeLoginForm}>
+                                    Cancel
+                                </Button>
+                            </Space>
+                        </Form.Item>
+                    </Form>
                 </Modal>
                 <Modal title="Sign Up" open={signUpOpen} onCancel={onSignUpCancel}>
                     <p>Signup</p>

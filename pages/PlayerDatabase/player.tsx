@@ -6,7 +6,7 @@ import { Player } from "@/datatypes/Player";
 import { useRouter } from "next/router";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import PermissionDenied from "@/components/PermissionDenied";
-import { Collapse, Layout, Space, Table, Timeline, Typography } from 'antd';
+import { Collapse, Empty, Layout, Select, Space, Table, Timeline, Typography } from 'antd';
 import { apiRequest, API_ENDPOINTS } from "@/FrontendAPI/API";
 import { useUserSession } from "@/hooks/useUserSession";
 import DataVisualization from "@/components/DataVisualization";
@@ -23,6 +23,7 @@ const Player = () => {
     const [player, setPlayer] = useState<Player | null>(null);
     const [dataLoading, setDataLoading] = useState(true);
     const { session } = useUserSession();
+    const [selectedInjuryYear, setSelectedInjuryYear] = useState(0);
 
     const playerDataCallback = useCallback((data: unknown) => {
         setPlayer(data as Player);
@@ -35,6 +36,18 @@ const Player = () => {
             apiRequest(API_ENDPOINTS.PLAYER_DATA, playerDataCallback, 'POST', JSON.stringify(id));
         }
     }, [playerDataCallback, router.query]);
+
+    useEffect(() =>  {
+        if (player?.years) {
+            let maxYear = 0;
+            for (const year of player.years) {
+                if (Number(year) > maxYear) {
+                    maxYear = Number(year);
+                }
+            }
+            setSelectedInjuryYear(maxYear);
+        }
+    }, [player?.years]);
 
     const tableColumns = useMemo((): ColumnsType<Record<string, string>> => {
         if (player?.stats) {
@@ -81,14 +94,7 @@ const Player = () => {
 
     const timelineData = useMemo(() => {
         if (player?.injuries) {
-            let maxYear = 0;
-
-            for (const year of player.years) {
-                if (Number(year) > maxYear) {
-                    maxYear = Number(year);
-                }
-            }
-            return player.injuries.filter(injury => Number(injury.season) === maxYear).map(injury => {
+            return player.injuries.filter(injury => Number(injury.season) === selectedInjuryYear).map(injury => {
                 const children: ReactNode[] = [];
                 if (injury.report_primary_injury.length > 0){
                     children.push(<Paragraph>Primary Injury: {injury.report_primary_injury}</Paragraph>);
@@ -123,16 +129,35 @@ const Player = () => {
                 }
                 return {
                     ...colorAndIcon,
-                    label: `${maxYear}, Week ${Number(injury.week)}`,
+                    label: `${selectedInjuryYear}, Week ${Number(injury.week)}`,
                     children: (<>{...children}</>),
                 };
             });
 
         }
         return [];
-    }, [player?.injuries, player?.years]);
+    }, [player?.injuries, selectedInjuryYear]);
 
+    const injuryYearSelectOptions = useMemo(() => {
+        if (player?.years) {
+            return player.years.map(year => ({
+                label: year,
+                value: Number(year),
+            })).reverse();
+        }
+        return [];
+    }, [player?.years]);
 
+    const onInjuryYearChange = useCallback((value: number) => {
+        setSelectedInjuryYear(value);
+    }, []);
+
+    const renderTimeLine = useMemo(() => {
+        if (timelineData.length > 0) {
+            return <Timeline reverse items={timelineData} mode="left" />;
+        }
+        return <Empty description="No Injury Data" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+    }, [timelineData]);
 
     if (!session) {
         return <PermissionDenied />;
@@ -153,7 +178,8 @@ const Player = () => {
                             <Table columns={tableColumns} dataSource={tableData} bordered scroll={{ x: '100%', y: '70vh' }} loading={dataLoading} pagination={false}/>
                         </Panel>
                         <Panel header={<Space><WarningOutlined />Injury Report</Space>} key="3">
-                            <Timeline items={timelineData} mode="left"/>
+                            <Select onChange={onInjuryYearChange} style={{ width: '25%'}} value={selectedInjuryYear} options={injuryYearSelectOptions} />
+                            {renderTimeLine}
                         </Panel>
                     </Collapse>    
                 </Content>
