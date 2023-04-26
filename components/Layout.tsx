@@ -6,7 +6,7 @@
 */
 import { Menu, MenuProps, Layout as AntLayout, Button, Divider } from 'antd';
 import React, { useState, useCallback, useMemo } from 'react';
-import { DatabaseFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined, SolutionOutlined, UserOutlined } from '@ant-design/icons';
+import { DatabaseFilled, FileAddFilled, HomeFilled, MenuFoldOutlined, MenuUnfoldOutlined, SolutionOutlined, UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import AuthModals from './AuthModals';
@@ -54,6 +54,7 @@ const Layout = ({ children }: LayoutProps) => {
         const items = [getItem('Home', '1', <HomeFilled />),];
         if (session) {
             items.push(getItem('Player Database', '2', <DatabaseFilled />));
+            items.push(getItem('Custom Dataset', '3', <FileAddFilled />));
         }
         if (session?.user.role === 'admin') {
             items.push(getItem('Admin', '9', <SolutionOutlined />));
@@ -67,6 +68,8 @@ const Layout = ({ children }: LayoutProps) => {
         switch (true) {
             case route.startsWith('/PlayerDatabase'):
                 return ['2'];
+            case route.startsWith('/CustomDataset'):
+                return ['3'];
             case route.startsWith('/Admin'):
                 return ['9'];
             case route.startsWith('/'):
@@ -83,6 +86,9 @@ const Layout = ({ children }: LayoutProps) => {
                 break;
             case '2':
                 router.push('/PlayerDatabase');
+                break;
+            case '3':
+                router.push('/CustomDataset');
                 break;
             case '9':
                 router.push('/Admin');

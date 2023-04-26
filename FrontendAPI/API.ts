@@ -1,6 +1,7 @@
 export const API_ENDPOINTS = {
     ALL_PLAYERS: '/api/allplayers',
     PLAYER_DATA: '/api/playerData',
+    MULTI_PLAYER_DATA: '/api/multiPlayerData',
     ALL_USERS: '/api/allUsers',
 };
 
