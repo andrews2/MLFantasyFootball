@@ -13,6 +13,8 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import dayjs, { Dayjs } from 'dayjs';
 import FileSaver from 'file-saver';
 import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { useUserSession } from "@/hooks/useUserSession";
+import PermissionDenied from "@/components/PermissionDenied";
 
 
 const { Text, Paragraph } = Typography;
@@ -30,6 +32,7 @@ const CustomDataset = () => {
     const { token } = theme.useToken();
 
     const stats = useStatList();
+    const { session } = useUserSession();
 
     const contentStyle: React.CSSProperties = {
         padding: '16px',
@@ -234,6 +237,10 @@ const CustomDataset = () => {
             }
         ];
     }, [fileGenLoading, fileName, fileNameAddon, onGenerateFileClick, onSelectedPlayersChange, onStatCheckChange, onStatsNameChange, onYearChange, selectedPlayersValue, stats, statsMap]);
+
+    if (!session) {
+        return <PermissionDenied />;
+    }
 
     return (
         <>
