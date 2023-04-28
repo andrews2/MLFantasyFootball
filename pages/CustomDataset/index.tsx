@@ -29,6 +29,8 @@ const CustomDataset = () => {
     const [fileName, setFileName] = useState('Custom_Dataset');
     const [fileType, setFileType] = useState('csv');
     const [fileGenLoading, setFileGenLoading] = useState(false);
+    const [customSelectedPlayers, setCustomSelectedPlayers] = useState<string[]>([]);
+    const [customSelectedIds, setCustomSelectedIds] = useState<string[]>([]);
     const { token } = theme.useToken();
 
     const stats = useStatList();
@@ -81,32 +83,37 @@ const CustomDataset = () => {
                 selectedYears.push(String(i));
             }
         }
-        let selectedPosition: string | null = null;
-        if (selectedPlayersValue === 2) {
-            selectedPosition = 'QB';
-        } else if (selectedPlayersValue === 3) {
-            selectedPosition = 'RB';
-        } else if (selectedPlayersValue === 4) {
-            selectedPosition = 'WR';
+        let playerIds;
+        if (selectedPlayersValue === 5) {
+            playerIds = customSelectedIds;
+        } else {
+            let selectedPosition: string | null = null;
+            if (selectedPlayersValue === 2) {
+                selectedPosition = 'QB';
+            } else if (selectedPlayersValue === 3) {
+                selectedPosition = 'RB';
+            } else if (selectedPlayersValue === 4) {
+                selectedPosition = 'WR';
+            }
+            playerIds = players?.filter((player) => {
+                let inTimeRange = false;
+                let correctPosition = false;
+                for (const year of player.years) {
+                    if (selectedYears.includes(year)) {
+                        inTimeRange = true;
+                        break;
+                    }
+                }
+                if (selectedPosition) {
+                    if (player.position === selectedPosition){
+                        correctPosition = true;
+                    }
+                }
+                return inTimeRange && correctPosition;
+            }).map((player) => {
+                return player.player_id;
+            });
         }
-        const playerIds = players?.filter((player) => {
-            let inTimeRange = false;
-            let correctPosition = false;
-            for (const year of player.years) {
-                if (selectedYears.includes(year)) {
-                    inTimeRange = true;
-                    break;
-                }
-            }
-            if (selectedPosition) {
-                if (player.position === selectedPosition){
-                    correctPosition = true;
-                }
-            }
-            return inTimeRange && correctPosition;
-        }).map((player) => {
-            return player.player_id;
-        });
         apiRequest(API_ENDPOINTS.MULTI_PLAYER_DATA, (data) => {
             const playerData = data as Player[];
             if (playerData instanceof Array){
@@ -154,7 +161,7 @@ const CustomDataset = () => {
             }
             setFileGenLoading(false);
         }, 'POST', JSON.stringify(playerIds));
-    }, [fileName, fileType, players, selectedPlayersValue, statsMap, years]);
+    }, [customSelectedIds, fileName, fileType, players, selectedPlayersValue, statsMap, years]);
 
     const fileNameAddon = useMemo(() => {
         return <Select value={fileType} options={[{value: 'csv', label: '.csv'}, {value: 'txt', label: '.txt'}]} onChange={(value => {setFileType(value);})} style={{ width: '96px'}} />;
@@ -182,6 +189,26 @@ const CustomDataset = () => {
         };
     }, [statsMap]);
 
+    const customSelectPlayersOptions = useMemo(() => {
+        if (players) {
+            return players.filter(player => !customSelectedPlayers.includes(player.player_id)).map(player => ({
+                value: player.name,
+                label: player.name,
+                id: player.player_id,
+            }));
+        }
+        return [];
+    }, [customSelectedPlayers, players]);
+
+    const onCustomSelectedPlayerChange = useCallback((value: string[], option: Record<string, string> | Record<string,string>[]) => {
+        setCustomSelectedPlayers(value);
+        if (option instanceof Array) {
+            setCustomSelectedIds(option.map(opt => (opt.id)));
+        } else {
+            setCustomSelectedIds([option.id]);
+        }
+    }, []);
+
     const steps = useMemo(() => {
         return [
             {
@@ -189,14 +216,18 @@ const CustomDataset = () => {
                 content: (
                     <Space direction="vertical" style={{ width: '100%', height:'55vh', overflow: 'auto' }}>
                         <Card title="Choose Players">
-                            <Radio.Group value={selectedPlayersValue} onChange={onSelectedPlayersChange}>
-                                <Space direction="vertical">
-                                    <Radio value={1}>All Players</Radio>
-                                    <Radio value={2}>All Quarterbacks</Radio>
-                                    <Radio value={3}>All Running Backs</Radio>
-                                    <Radio value={4}>All Wide Receivers</Radio>
-                                </Space>
-                            </Radio.Group>
+                            <Space direction="vertical" style={{ width: '100%'}}>
+                                <Radio.Group value={selectedPlayersValue} onChange={onSelectedPlayersChange}>
+                                    <Space direction="vertical" style={{ width: '100%' }}>
+                                        <Radio value={1}>All Players</Radio>
+                                        <Radio value={2}>All Quarterbacks</Radio>
+                                        <Radio value={3}>All Running Backs</Radio>
+                                        <Radio value={4}>All Wide Receivers</Radio>
+                                        <Radio value={5}>Custom</Radio>
+                                    </Space>
+                                </Radio.Group>
+                                {selectedPlayersValue === 5 && <Select options={customSelectPlayersOptions} value={customSelectedPlayers} onChange={onCustomSelectedPlayerChange} mode="multiple" style={{ width: '60%'}} />}
+                            </Space>
                         </Card>
                         <Card title="Choose Years">
                             <DatePicker.RangePicker picker="year" defaultValue={[dayjs('2002'), dayjs('2022')]} onChange={onYearChange} style={{ width: '100%' }}/>
@@ -220,7 +251,7 @@ const CustomDataset = () => {
                                     </Space>
                                 </Card>
                             </List.Item>
-                    )} />
+                        )} />
                     </>
                 ),
             },
@@ -236,7 +267,7 @@ const CustomDataset = () => {
                 )
             }
         ];
-    }, [fileGenLoading, fileName, fileNameAddon, onGenerateFileClick, onSelectedPlayersChange, onStatCheckChange, onStatsNameChange, onYearChange, selectedPlayersValue, stats, statsMap]);
+    }, [customSelectPlayersOptions, customSelectedPlayers, fileGenLoading, fileName, fileNameAddon, onCustomSelectedPlayerChange, onGenerateFileClick, onSelectedPlayersChange, onStatCheckChange, onStatsNameChange, onYearChange, selectedPlayersValue, stats, statsMap]);
 
     if (!session) {
         return <PermissionDenied />;
