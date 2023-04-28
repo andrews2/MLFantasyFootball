@@ -5,10 +5,7 @@ module.exports = {
 		"node": true
 	},
 	"extends": [
-		"eslint:recommended",
-		"plugin:react/recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:react-hooks/recommended",
+		"eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended",
 	],
 	"overrides": [
 	],
@@ -18,8 +15,7 @@ module.exports = {
 		"sourceType": "module"
 	},
 	"plugins": [
-		"react",
-		"@typescript-eslint"
+		"react", "@typescript-eslint"
 	],
 	"rules": {
 		"react/react-in-jsx-scope": "off",
@@ -27,5 +23,8 @@ module.exports = {
 		"react/jsx-indent": ["error", "tab"],
 		"indent": ["error", "tab"],
 		"semi": [2, "always"],
+		"array-element-newline": ["error", {
+			"ArrayExpression": { "minItems": 5 },
+		}]
 	}
 };

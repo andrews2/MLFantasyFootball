@@ -161,7 +161,13 @@ const CustomDataset = () => {
 			}
 			setFileGenLoading(false);
 		}, 'POST', JSON.stringify(playerIds));
-	}, [customSelectedIds, fileName, fileType, players, selectedPlayersValue, statsMap, years]);
+	}, [customSelectedIds,
+		fileName,
+		fileType,
+		players,
+		selectedPlayersValue,
+		statsMap,
+		years]);
 
 	const fileNameAddon = useMemo(() => {
 		return <Select value={fileType} options={[{value: 'csv', label: '.csv'}, {value: 'txt', label: '.txt'}]} onChange={(value => {setFileType(value);})} style={{ width: '96px'}} />;
@@ -235,8 +241,7 @@ const CustomDataset = () => {
 					</Space>
                     
 				)
-			},
-			{
+			}, {
 				title: 'Format Statistics',
 				content: (
 					<>
@@ -254,8 +259,7 @@ const CustomDataset = () => {
 						)} />
 					</>
 				),
-			},
-			{
+			}, {
 				title: 'Download File',
 				content: (
 					<Space size="large" direction="vertical" style={{ width: '100%', height: '55vh', justifyContent: 'center'}}>
@@ -267,7 +271,20 @@ const CustomDataset = () => {
 				)
 			}
 		];
-	}, [customSelectPlayersOptions, customSelectedPlayers, fileGenLoading, fileName, fileNameAddon, onCustomSelectedPlayerChange, onGenerateFileClick, onSelectedPlayersChange, onStatCheckChange, onStatsNameChange, onYearChange, selectedPlayersValue, stats, statsMap]);
+	}, [customSelectPlayersOptions,
+		customSelectedPlayers,
+		fileGenLoading,
+		fileName,
+		fileNameAddon,
+		onCustomSelectedPlayerChange,
+		onGenerateFileClick,
+		onSelectedPlayersChange,
+		onStatCheckChange,
+		onStatsNameChange,
+		onYearChange,
+		selectedPlayersValue,
+		stats,
+		statsMap]);
 
 	if (!session) {
 		return <PermissionDenied />;

@@ -46,15 +46,12 @@ const PlayerDatabase = () => {
 				dataIndex: 'name', 
 				key: 'name',
 				sorter: (a, b) => a.name.localeCompare(b.name), 
-			}, 
-			{
+			}, {
 				title: 'Position',
 				dataIndex: 'position',
 				key: 'position',
 				filters: [
-					{text: 'QB', value: 'QB'},
-					{text: 'RB', value: 'RB'},
-					{text: 'WR', value: 'WR'},
+					{text: 'QB', value: 'QB'}, {text: 'RB', value: 'RB'}, {text: 'WR', value: 'WR'},
 				],
 				onFilter: (value: string | number | boolean, record: TableDataType) => record.position === value,
 				sorter: (a, b) => b.position.localeCompare(a.position),
