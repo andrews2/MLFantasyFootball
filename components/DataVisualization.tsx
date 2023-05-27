@@ -75,7 +75,7 @@ const DataVisualization = ({ player }: DataVisualizationProps) => {
 	return (
 		<>
 			<Card>
-				<Dropdown menu={{items: [{key: 'save', label:'Save As Image', onClick: onSaveAsImageClick}]}} trigger={['contextMenu']}>
+				<Dropdown menu={{items: [{key: 'save', label:'Save As PNG', onClick: onSaveAsImageClick}]}} trigger={['contextMenu']}>
 					<Space direction="vertical" style={{ width: '100%' }}>
 						<Row align="middle">
 							<Text>Through The Years</Text>
